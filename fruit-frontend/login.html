@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - FruitShop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>body {
+  background-color: #23272f;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 1rem;
+}
+
+.container {
+  background: #161b22;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+h2 {
+  text-align: center;
+  color: #00adb5;
+  margin-bottom: 25px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input-group label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: block;
+  color: #ccc;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 68%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #ccc;
+  font-size: 18px;
+}
+
+button {
+  padding: 12px;
+  background: #00adb5;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 15px auto 0;
+  display: block;
+  width: fit-content;
+}
+
+button:hover {
+  background: #019aa1;
+  transform: scale(1.02); /* Slight grow instead of shrink */
+}
+
+.footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.footer a {
+  color: #00adb5;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.g_id_signin {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 20px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+
+      <div class="input-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" name="password" required />
+        <span class="toggle-password" onclick="togglePassword('loginPassword')">👁️</span>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Google Sign-In -->
+    <div id="g_id_onload"
+      data-client_id="924469195964-slq5ukhc042omhnvkd6gqoiedddkv7jv.apps.googleusercontent.com"
+      data-context="signin"
+      data-ux_mode="popup"
+      data-callback="handleCredentialResponse"
+      data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin"
+      data-type="standard"
+      data-theme="filled_black"
+      data-text="continue_with"
+      data-size="large">
+    </div>
+
+    <div class="footer">
+      Don’t have an account? <a href="signup.html">Sign Up</a>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword(id) {
+      const field = document.getElementById(id);
+      field.type = field.type === "password" ? "text" : "password";
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const res = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert(data.message);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          window.location.href = "index.html"; // Redirect to dashboard/home
+        } else {
+          alert(data.message || "Login failed");
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    });
+
+    function handleCredentialResponse(response) {
+      fetch('http://localhost:5000/api/auth/google-signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert(data.message);
+            window.location.href = "index.html";
+          } else {
+            alert(data.message || 'Google login failed');
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Something went wrong with Google Sign-In');
+        });
+    }
+  </script>
+</body>
+</html>

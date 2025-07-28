@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fresh Harvest - Home</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/account.css"/>
 </head>
 <body>
   <header>
@@ -16,8 +17,19 @@
         <li><a href="contact.html">Contact</a></li>
       </ul>
       <div class="cart">
-        <a href="cart.html">Cart 🛒 (<span id="cart-count">0</span>)</a>
+        <a href="cart.html">🛒</a>
       </div>
+      <div class="cart">
+        <a href="admin-register.html">🛠️</a>
+      </div>
+      <div class="account-menu" id="accountMenu">
+  <button id="accountBtn">👤 Account</button>
+  <div class="dropdown" id="accountDropdown" style="display: none;">
+    <p id="usernameDisplay">Welcome!</p>
+    <a href="#" onclick="logout()">Logout</a>
+    <a href="#">Settings</a>
+  </div>
+</div>
     </nav>
   </header>
 
@@ -36,12 +48,12 @@
       <h2>Featured Fruits</h2>
       <div class="grid">
         <div class="card">
-          <img src="assets/apples.jpg" alt="Crisp Apples" />
+          <img src="assets/apple.jpg" alt="Crisp Apples" />
           <h3>Crisp Apples</h3>
           <p>Perfect for snacking</p>
         </div>
         <div class="card">
-          <img src="assets/bananas.jpg" alt="Sweet Bananas" />
+          <img src="assets/banana.jpg" alt="Sweet Bananas" />
           <h3>Sweet Bananas</h3>
           <p>Great for smoothies</p>
         </div>
@@ -58,7 +70,7 @@
       <h2>Seasonal Promotions</h2>
       <div class="grid">
         <div class="card wide">
-          <img src="assets/summer.jpg" alt="Summer Sale" />
+          <img src="assets/summerfruits.jpg" alt="Summer Sale" />
           <h3>Summer Fruit Sale</h3>
           <p>Enjoy discounts on your favorite summer fruits.</p>
         </div>
@@ -75,7 +87,7 @@
       <h2>Explore Our Categories</h2>
       <div class="grid">
         <div class="card">
-          <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce" alt="Tropical Fruits" />
+          <img src="assets/tropical-image.jpg"  alt="Tropical Fruits" />
           <h3>Tropical Fruits</h3>
           <p>Exotic flavors from around the world.</p>
         </div>
@@ -85,7 +97,7 @@
           <p>Freshly picked berries for your enjoyment.</p>
         </div>
         <div class="card">
-          <img src="assets/stone.jpg" alt="Stone Fruits" />
+          <img src="assets/stone-fruit.jpg" alt="Stone Fruits" />
           <h3>Stone Fruits</h3>
           <p>Juicy and sweet stone fruits in season.</p>
         </div>
@@ -103,5 +115,30 @@
   </footer>
     <script src="js/main.js"></script>
     <script src="js/animation.js"></script>
+    <script>
+  const accountBtn = document.getElementById('accountBtn');
+  const accountDropdown = document.getElementById('accountDropdown');
+  const usernameDisplay = document.getElementById('usernameDisplay');
+
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  // If user is logged in, show name + dropdown
+  if (user) {
+    usernameDisplay.textContent = `👋 ${user.name}`;
+    accountBtn.addEventListener('click', () => {
+      accountDropdown.style.display = accountDropdown.style.display === 'block' ? 'none' : 'block';
+    });
+  } else {
+    // If not logged in → redirect to login
+    accountBtn.addEventListener('click', () => {
+      window.location.href = 'login.html';
+    });
+  }
+  function logout() {
+    localStorage.removeItem('user');
+    window.location.reload();
+  }
+</script>
+
 </body>
 </html>

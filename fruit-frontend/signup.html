@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up - FruitShop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    body {
+      background-color: #23272f;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 1rem;
+    }
+    .container {
+      background: #161b22;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      color: #00adb5;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      margin-bottom: 5px;
+      display: block;
+      color: #ccc;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 40px 12px 12px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 67%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #ccc;
+      font-size: 18px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    button {
+      padding: 12px 30px;
+      background: #00adb5;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 15px auto 0;
+      display: block;
+      width: fit-content;
+    }
+
+    button:hover {
+      background: #019aa1;
+      transform: scale(1.02);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .footer a {
+      color: #00adb5;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .g_id_signin {
+      width: 100%;
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Sign Up</h2>
+    <form id="signupForm">
+      <div class="input-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="input-group">
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" required />
+      </div>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+      </div>
+      <div class="input-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" required />
+        <span class="toggle-password" onclick="togglePassword('signupPassword')">👁️</span>
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <!-- Google Sign-Up -->
+    <div id="g_id_onload"
+         data-client_id="924469195964-slq5ukhc042omhnvkd6gqoiedddkv7jv.apps.googleusercontent.com"
+         data-context="signup"
+         data-ux_mode="popup"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-theme="filled_black"
+         data-text="sign_up_with"
+         data-size="large">
+    </div>
+
+    <div class="footer">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword(id) {
+      const field = document.getElementById(id);
+      field.type = field.type === "password" ? "text" : "password";
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const user = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('signupPassword').value
+      };
+
+      const res = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user)
+      });
+
+      const data = await res.json();
+      if(data.message){
+        alert(data.message);
+        window.location.href="login.html";
+      }else{
+        alert(data.message);
+        window.location.href="signup.html"
+      }
+    });
+
+    function handleCredentialResponse(response) {
+      const password = prompt("Please set your password to complete Google sign-up:");
+      if (!password) return alert("Password is required to register");
+
+      fetch('http://localhost:5000/api/auth/google-signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential, password })
+      })
+      .then(res => res.json())
+      .then(data => alert(data.message))
+      .catch(err => alert('Google Sign-In failed'));
+    }
+  </script>
+</body>
+</html>

@@ -16,7 +16,9 @@
         <li><a href="contact.html">Contact</a></li>
       </ul>
       <div class="cart">
-        <a href="cart.html">Cart 🛒 (<span id="cart-count">3</span>)</a>
+        <a href="cart.html">🛒 
+          <!-- <span id="cart-count">3</span> -->
+        </a>
       </div>
     </nav>
   </header>
@@ -25,12 +27,12 @@
     <section class="section">
       <h2>Checkout</h2>
       <form class="checkout-form">
-        <label>Name</label><input type="text" placeholder="Your Name">
-        <label>Address</label><input type="text" placeholder="Street, City, Zip">
-        <label for="payment-method">Payment Method</label>
-        <select id="payment-method" name="payment-method">
+        <label>Name</label><input type="text" placeholder="Your Name" required>
+        <label>Address</label><input type="text" placeholder="Street, City, Zip" required>
+        <label for="payment-method" >Payment Method</label>
+        <select required id="payment-method" name="payment-method">
         <option >Credit Card</option>
-        <option>PayPal</option>
+        <option>Cash on Delivery</option>
         <option>Gift Card</option>
         </select>
         <button class="btn">Place Order</button>
@@ -48,5 +50,36 @@
   </footer>
     <script src="js/main.js"></script>
     <script src="js/animation.js"></script>
+    <script>
+  document.querySelector('.checkout-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const name = this.querySelector('input[type="text"]').value;
+    const address = this.querySelectorAll('input')[1].value;
+    const paymentMethod = document.getElementById('payment-method').value;
+    const cart = JSON.parse(localStorage.getItem('checkoutCart')) || [];
+
+    const orderData = {
+      name,
+      address,
+      paymentMethod,
+      items: cart
+    };
+
+    const res = await fetch('http://localhost:5000/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderData)
+    });
+
+    const result = await res.json();
+    alert(result.message || "Order placed successfully!");
+    localStorage.removeItem('cart');
+    localStorage.removeItem('checkoutCart');
+    window.location.href = "shop.html";
+  });
+</script>
+
 </body>
 </html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FruitShop Admin Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <h2>🍊 FruitShop</h2>
+      <nav>
+        <a href="#" class="active">Dashboard</a>
+        <a href="index.html">Home</a>
+        <a href="#" onclick="logout()">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <h1>Add / Update Product</h1>
+      <form id="productForm">
+        <input type="text" placeholder="Product Name" name="name" required />
+        <input type="number" placeholder="Price" name="price" required />
+        <input type="text" placeholder="Image URL" name="image" required />
+        <textarea placeholder="Description" name="description" required></textarea>
+        <button type="submit">Save Product</button>
+      </form>
+
+      <section class="product-list">
+        <h2>All Products</h2>
+        <div id="productsContainer" class="product-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

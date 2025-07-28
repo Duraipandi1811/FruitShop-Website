@@ -23,13 +23,13 @@ exports.getOrderById = async (req, res) => {
 
 // POST /api/orders
 exports.createOrder = async (req, res) => {
-    const order = new Order(req.body);
     try {
-        const saved = await order.save();
-        res.status(201).json(saved);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+    const newOrder = new Order(req.body);
+    await newOrder.save();
+    res.status(201).json({ message: "Order placed successfully!" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 // PUT /api/orders/:id
